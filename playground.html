@@ -18,15 +18,10 @@
 </header>
 <main id="main">
 
-<section class="page-head"><p class="kicker">Try it</p><h1>Run HolyC</h1>
+<section class="page-head" data-bar="Try it"><p class="kicker">Try it</p><h1>Run HolyC</h1>
 <p class="lede">Type a program and run it. This is a small interpreter written for this site, covering a subset of HolyC. It is not TempleOS, and nothing you type leaves your browser.</p></section>
 <section aria-labelledby="h-play">
   <h2 id="h-play" class="sr">Playground</h2>
-  <form id="play-form" class="pform js-only" hidden>
-    <label class="f" for="src"><span class="label">HolyC program</span></label>
-    <textarea id="src" name="src" rows="12" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" maxlength="6000">&quot;Hello, world!\n&quot;;</textarea>
-    <div class="row"><button class="btn" type="submit">Run</button><span class="hint">Ctrl or Cmd + Enter also runs it</span></div>
-  </form>
   <div class="js-only" id="examples" hidden><p class="small">Start from an example:</p><div class="chips"><button type="button" class="chip ex" data-code="&quot;Hello, world!\n&quot;;">Hello</button><button type="button" class="chip ex" data-code="I64 n = 42;
 F64 x = 2.5;
 U8 c = &#x27;A&#x27;;
@@ -71,6 +66,11 @@ for (n = 2; n &lt;= 50; n++)
   if (IsPrime(n))
     &quot;%d &quot;, n;
 &quot;\n&quot;;">Primes</button></div></div>
+  <form id="play-form" class="pform js-only" hidden>
+    <label class="f" for="src"><span class="label">HolyC program</span></label>
+    <textarea id="src" name="src" rows="12" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" maxlength="6000">&quot;Hello, world!\n&quot;;</textarea>
+    <div class="row"><button class="btn" type="submit">Run</button><span class="hint">Ctrl or Cmd + Enter also runs it</span></div>
+  </form>
   <div id="result" class="result" role="status" aria-live="polite"></div>
   <noscript><p class="note">The playground needs JavaScript, which runs it entirely in your browser. The <a href="holyc.html">lessons</a> show every example with its output.</p></noscript>
 </section>
@@ -78,14 +78,15 @@ for (n = 2; n &lt;= 50; n++)
   <div><h2 id="h-sup" class="sech">What it supports</h2>
   <ul class="plain"><li>Types U0, Bool, I8 to I64, U8 to U64 and F64, with wrap-around at each size.</li><li>String statements and Print with %d %u %x %X %c %s %f (use %.2f and the like for floats) and %%.</li><li>Functions with default and skipped arguments, calls without parentheses, recursion.</li><li>if, else, for, while, do while, switch, break, continue, return.</li><li>Arrays of numbers, U8 * strings, simple classes, #define, built-ins Print, PutChars, StrLen, Sqrt, Sin, Cos, Abs, Min, Max.</li></ul></div>
   <div><h2 class="sech">What it does not</h2>
-  <ul class="plain"><li>Pointers other than strings, memory allocation, asm, try and catch, goto, the file system, graphics, sound and the rest of TempleOS.</li><li>HolyC's operator-precedence differences: it uses C precedence, so avoid mixing bitwise operators with comparisons.</li><li>Anything that depends on TempleOS itself. For that you need the real system.</li></ul>
+  <ul class="plain"><li>Pointers other than U8 * strings, memory allocation, asm, try and catch, goto, the file system, graphics, sound and the rest of TempleOS.</li><li>Arrays of characters, two-dimensional arrays, array members in classes, function-like #define, and a #define with more than one token.</li><li>HolyC's operator-precedence differences: it uses C precedence, so avoid mixing bitwise operators with comparisons.</li><li>The $ document-format escape: a dollar sign prints as it is.</li><li>Large unsigned values: use %u to print a U64 above 9 quintillion, and avoid comparing signed with unsigned.</li><li>Anything that depends on TempleOS itself. For that you need the real system.</li></ul>
+  <p class="small">Limits: programs of up to 6,000 characters, about 3 million steps, 8,000 characters of output, 1,000,000 array cells in total, and recursion 400 deep.</p>
   <p class="small">The interpreter is checked against real C programs compiled with gcc for arithmetic and formatting (see <code>scripts/check-holyc.js</code>), not against TempleOS.</p></div>
 </section>
 <nav class="stepnav" aria-label="Previous and next"><a class="prev" href="terry.html"><span>Previous</span>Terry A. Davis</a><a class="next" href="resources.html"><span>Next</span>Resources</a></nav>
 </main>
 <footer class="foot">
   <nav class="footnav" aria-label="Pages"><a href="index.html">Home</a><a href="holyc.html">HolyC</a><a href="templeos.html">TempleOS</a><a href="terry.html">Terry</a><a href="playground.html">Try it</a><a href="resources.html">Resources</a></nav>
-  <p><strong>Written from general knowledge, and not yet checked line by line</strong> against the TempleOS documentation or Terry Davis's own writing. Each fact carries a mark for how sure we are. Outputs come from a small interpreter written for this site, which runs a subset of HolyC; they have not been run on TempleOS.</p>
+  <p><strong>Written from general knowledge, and not checked against a source here.</strong> Each fact about TempleOS and Terry Davis carries a mark for how sure we are. The language lessons are shown by running code in a small interpreter written for this site, which covers a subset of HolyC; nothing has been run on TempleOS.</p>
   <p class="small">An independent fan and study site, not affiliated with Terry Davis's estate or any HolyC project. Code and text are MIT-licensed. Nothing on this site loads from another domain.</p>
 </footer>
 <script src="holyc-core.js"></script><script src="playground.js"></script>

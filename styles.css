@@ -109,3 +109,35 @@ textarea { width: 100%; font: 16px/1.5 var(--mono); color: var(--WHITE); backgro
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 @media print { .mast nav, .skip, .cta, .chips, .pform { display: none; } body, .band, .screen { background: var(--WHITE); color: var(--BLACK); box-shadow: none; } .screen { border-color: var(--BLACK); } .logo { display: none; } .prog, .term, .palette li { background: var(--WHITE); color: var(--BLACK); border-color: var(--BLACK); } .prog span, .term pre, .pn { color: var(--BLACK) !important; } }
 .term .muted, .result .muted, .prog .muted { color: var(--LTGRAY); }
+
+/* ===== round 1 resolutions ===== */
+::selection { background: var(--accent); color: var(--on-accent); }
+/* blue panels are blue in both colour schemes, with their own light-on-blue colours, so the light page is a white desk with the same windows on it */
+@media (prefers-color-scheme: light) { :root { --panel: var(--BLUE); } .card { color: var(--ink); } .card .tag { color: var(--ink2); } .card h3 a { color: var(--accent); } }
+.band, .card, .page-head, .screen { --ink: var(--WHITE); --ink2: var(--LTGRAY); --accent: var(--YELLOW); --link: var(--LTCYAN); --on-accent: var(--BLACK); --edge: var(--LTGRAY); --ctl: var(--LTGRAY); color: var(--WHITE); }
+.band .btn:hover, .page-head .btn:hover { background: var(--WHITE); color: var(--BLACK); }
+/* the identity carried down: every inner page opens as a small screen */
+.page-head { background: var(--BLUE); border: 8px solid var(--LTGRAY); padding: 0 clamp(1rem, 3vw, 1.8rem) 1.4rem; margin-top: 1.4rem; box-shadow: none; }
+.page-head::before { content: attr(data-bar) "   640x480, 16 colours"; display: block; margin: 0 calc(-1 * clamp(1rem, 3vw, 1.8rem)) 1.2rem; padding: .45rem .8rem; background: var(--LTGRAY); color: var(--BLACK); font: 700 14px/1 var(--mono); white-space: pre; overflow: hidden; }
+.page-head .kicker { margin-top: .2rem; } .page-head h1 { color: var(--WHITE); } .page-head .lede { color: var(--WHITE); }
+section.page-head { padding-top: 0; }
+/* a larger logo on a screen as wide as the column; a thin palette bar */
+.screen { max-width: none; } .logo { width: min(100%, 760px); }
+.herosrc { margin: .8rem 0 0; font: 600 14px/1.4 var(--mono); color: var(--LTGRAY); }
+.whofor { text-align: center; margin: 1.2rem auto 0; max-width: 60ch; font-size: 1.05rem; color: var(--ink); }
+.palwrap { max-width: none; margin-top: 1.4rem; }
+.palette { gap: 3px; } .sw { height: 1.6rem; } .pn { padding: .25rem .3rem .3rem; font-size: 12px; }
+@media (min-width: 1000px) { .palette { grid-template-columns: repeat(16, 1fr); } .sw { height: 1.1rem; } .pn { font-size: 12px; padding: .2rem .15rem .25rem; } .pn b { display: block; } }
+/* legend above lists of marked facts */
+.legline { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.2rem; margin: 0 0 1.2rem; padding: .7rem 0; border-top: 2px solid var(--edge); border-bottom: 2px solid var(--edge); font-size: 15px; } .legline .lg { font: 800 12px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink2); } .legline .lgn { color: var(--ink2); max-width: 70ch; flex-basis: 100%; }
+/* the playground's examples come first, so the result sits right under Run */
+#examples { margin-bottom: .8rem; } #result { scroll-margin-bottom: 1rem; }
+/* print: a plain page whatever the colour scheme, nothing white on white */
+@media print {
+  :root, .band, .card, .page-head, .screen, .term, .prog, .palette li, .okbox, .errbox { --bg: var(--WHITE) !important; --panel: var(--WHITE) !important; --ink: var(--BLACK) !important; --ink2: var(--BLACK) !important; --accent: var(--BLACK) !important; --link: var(--BLACK) !important; --edge: var(--BLACK) !important; --ctl: var(--BLACK) !important; --on-accent: var(--WHITE) !important; color: var(--BLACK) !important; background: var(--WHITE) !important; }
+  .screen, .page-head, .card, .term, .prog, .palette li, .okbox, .errbox, textarea { border-color: var(--BLACK) !important; box-shadow: none !important; }
+  .scrbar, .page-head::before { background: var(--WHITE) !important; color: var(--BLACK) !important; border-bottom: 2px solid var(--BLACK); }
+  .tagline, .src, .bnote, .pn, .pn b, .herosrc, .whofor, .term pre, .prog span, .legline, .legline * , .mk, .small, .palcap, .kicker { color: var(--BLACK) !important; }
+  .logo, .sw { display: none; } .mk i { border-top-color: var(--BLACK) !important; } .prog .cur { display: none; }
+}
+.herosrc { font-size: 15px; }

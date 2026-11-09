@@ -11,7 +11,7 @@
 
   var TYPES = { U0: { k: "void" }, Bool: { k: "i", b: 8, s: false }, I8: { k: "i", b: 8, s: true }, U8: { k: "i", b: 8, s: false }, I16: { k: "i", b: 16, s: true }, U16: { k: "i", b: 16, s: false },
     I32: { k: "i", b: 32, s: true }, U32: { k: "i", b: 32, s: false }, I64: { k: "i", b: 64, s: true }, U64: { k: "i", b: 64, s: false }, F64: { k: "f" } };
-  var STEP_LIMIT = 3000000, OUT_LIMIT = 8000, DEPTH_LIMIT = 400;
+  var STEP_LIMIT = 3000000, OUT_LIMIT = 8000, DEPTH_LIMIT = 400, CELL_LIMIT = 1000000;
 
   // ---- lexer -----------------------------------------------------------------------------------------------------
   function lex(src) {
@@ -27,9 +27,11 @@
       if (/[0-9]/.test(c) || (c === "." && /[0-9]/.test(src[i + 1] || ""))) {
         var m = src.slice(i).match(/^(0[xX][0-9a-fA-F]+|[0-9]*\.[0-9]+([eE][+-]?[0-9]+)?|[0-9]+\.([eE][+-]?[0-9]+)?|[0-9]+[eE][+-]?[0-9]+|[0-9]+)/);
         var txt = m[0]; i += txt.length;
-        if (/^0[xX]/.test(txt)) toks.push({ t: "num", v: BigInt(txt), line: line });
-        else if (/[.eE]/.test(txt)) toks.push({ t: "num", v: parseFloat(txt), line: line });
-        else toks.push({ t: "num", v: BigInt(txt), line: line });
+        if (/^0[xX]/.test(txt) || !/[.eE]/.test(txt)) {
+          var iv = BigInt(txt);
+          if (iv > 18446744073709551615n) throw new HCError("The number " + txt.slice(0, 24) + (txt.length > 24 ? "..." : "") + " does not fit in 64 bits.", line);
+          toks.push({ t: "num", v: iv, line: line });
+        } else toks.push({ t: "num", v: parseFloat(txt), line: line });
         continue;
       }
       if (/[A-Za-z_]/.test(c)) { var j = i; while (j < n && /[A-Za-z0-9_]/.test(src[j])) j++; toks.push({ t: "id", v: src.slice(i, j), line: line }); i = j; continue; }
@@ -80,7 +82,7 @@
 
     function parseItem() {
       var t = peek();
-      if (t.t === "pp") { next(); var m = t.v.match(/^#define\s+([A-Za-z_]\w*)\s+(.+)$/); if (m) return { k: "define", name: m[1], text: m[2], line: t.line }; throw new HCError("Preprocessor lines other than #define are not supported here.", t.line); }
+      if (t.t === "pp") { next(); var m = t.v.match(/^#define\s+([A-Za-z_]\w*)\s+(.+)$/); if (m) return { k: "define", name: m[1], text: m[2], line: t.line }; if (/^#define/.test(t.v)) throw new HCError("In this subset a #define must have a single value: a number, a string or a name.", t.line); throw new HCError("Preprocessor lines other than #define are not supported here.", t.line); }
       if (isId("class")) return parseClass();
       if (isId("public") || isId("extern") || isId("static")) next();
       if (isTypeName(peek())) {
@@ -136,8 +138,10 @@
       return { k: "decl", decls: decls, line: line };
     }
 
+    var C_TYPES = { int: "I64 (or I32 for 32 bits)", char: "U8 (or I8 for a signed one)", float: "F64", double: "F64", long: "I64", short: "I16", void: "U0", unsigned: "U64, U32, U16 or U8", bool: "Bool", size_t: "U64" };
     function parseStmt() {
       var t = peek();
+      if (t.t === "id" && Object.prototype.hasOwnProperty.call(C_TYPES, t.v) && (peek(1).t === "id" || isOp("*", 1))) fail("HolyC has no '" + t.v + "' type; use " + C_TYPES[t.v] + ". (The integer types are I8 to I64 and U8 to U64.)", t);
       if (t.t === "pp") return parseItem();
       if (t.t === "op" && t.v === "{") return parseBlock();
       if (t.t === "op" && t.v === ";") { next(); return { k: "empty", line: t.line }; }
@@ -248,7 +252,8 @@
   }
 
   function fixed(x, prec) {
-    var s = x.toFixed(prec);
+    var s = Math.abs(x) >= 1e21 && isFinite(x) ? BigInt(Math.trunc(Math.abs(x))).toString() + (prec > 0 ? "." + "0".repeat(prec) : "") : Math.abs(x).toFixed(prec);
+    if (x < 0 || Object.is(x, -0)) s = "-" + s;
     if (prec <= 15 && isFinite(x)) {
       var t = Math.abs(x) * Math.pow(10, prec), fl = Math.floor(t);
       if (t - fl === 0.5 && t < 9007199254740992) {
@@ -272,7 +277,7 @@
       if (ty === "%") { out += "%"; continue; }
       if (ai >= args.length) throw new HCError("The format string asks for more arguments than were given.", line);
       var a = args[ai++], s;
-      if (ty === "d" || ty === "u") { if (!isInt(a)) throw new HCError("%" + ty + " needs an integer.", line); s = (ty === "u" ? BigInt.asUintN(64, a) : a).toString(); if (flags.indexOf("+") > -1 && a >= 0n) s = "+" + s; }
+      if (ty === "d" || ty === "u") { if (!isInt(a)) throw new HCError("%" + ty + " needs an integer.", line); s = (ty === "u" ? BigInt.asUintN(64, a) : a).toString(); if (flags.indexOf("+") > -1 && a >= 0n) s = "+" + s; else if (flags.indexOf(" ") > -1 && a >= 0n) s = " " + s; }
       else if (ty === "x" || ty === "X") { if (!isInt(a)) throw new HCError("%" + ty + " needs an integer.", line); s = BigInt.asUintN(64, a).toString(16); if (ty === "X") s = s.toUpperCase(); }
       else if (ty === "c") { if (!isInt(a)) throw new HCError("%c needs an integer.", line); s = String.fromCharCode(Number(BigInt.asUintN(8, a))); }
       else if (ty === "s") { if (typeof a !== "string") throw new HCError("%s needs a string.", line); s = prec !== null ? a.slice(0, prec) : a; }
@@ -288,8 +293,8 @@
   function run(src) {
     var out = "", steps = 0, depth = 0;
     var globals = Object.create(null), funcs = Object.create(null), classes = Object.create(null), defines = Object.create(null);
-    var BRK = { k: "break" }, CNT = { k: "continue" };
-    function emit(s, line) { out += s; if (out.length > OUT_LIMIT) throw new HCError("Output limit reached; the program printed too much.", line); }
+    var BRK = { k: "break" }, CNT = { k: "continue" }, cells = 0;
+    function emit(s, line) { out += s; if (out.length > OUT_LIMIT) { out = out.slice(0, OUT_LIMIT); throw new HCError("Output limit reached (" + OUT_LIMIT + " characters); the program printed too much.", line); } }
     function tick(line) { if (++steps > STEP_LIMIT) throw new HCError("Stopped after too many steps. Is there an infinite loop?", line); }
 
     var builtins = {
@@ -304,6 +309,11 @@
     };
     var consts = { TRUE: 1n, FALSE: 0n, NULL: 0n };
 
+    function suggest(name) {
+      var low = name.toLowerCase(), pools = [Object.keys(builtins), Object.keys(funcs), Object.keys(globals), Object.keys(TYPES)];
+      for (var i = 0; i < pools.length; i++) for (var j = 0; j < pools[i].length; j++) if (pools[i][j].toLowerCase() === low && pools[i][j] !== name) return " Did you mean " + pools[i][j] + "? (HolyC is case-sensitive.)";
+      return "";
+    }
     function lookup(scopes, name, line) {
       for (var i = scopes.length - 1; i >= 0; i--) if (name in scopes[i]) return scopes[i][name];
       if (name in globals) return globals[name];
@@ -327,7 +337,7 @@
           if (cell) return cell.v;
           if (e.name in consts) return consts[e.name];
           if (e.name in defines) return evalExpr(defines[e.name], sc);
-          throw new HCError("'" + e.name + "' is not defined here.", e.line);
+          throw new HCError("'" + e.name + "' is not defined here." + suggest(e.name), e.line);
         }
         case "un": {
           var v = evalExpr(e.e, sc);
@@ -427,7 +437,7 @@
         var vals = e.args.map(function (a) { if (a === null) throw new HCError("A built-in cannot skip an argument.", e.line); return evalExpr(a, sc); });
         return builtins[name](vals, e.line);
       }
-      if (!f) throw new HCError("Function '" + name + "' is not defined" + (name in globals ? " (it is a variable)" : " yet; define it before you use it") + ".", e.line);
+      if (!f) throw new HCError("Function '" + name + "' is not defined" + (name in globals ? " (it is a variable)" : " yet; define it before you use it") + "." + suggest(name), e.line);
       return invoke(f, e.args, sc, e.line);
     }
     function invoke(f, argExprs, sc, line) {
@@ -451,11 +461,13 @@
       d.decls.forEach(function (x) {
         if (x.ty.ptr > 0 && !(x.ty.name === "U8" && x.ty.ptr === 1)) throw new HCError("Pointers other than U8 * strings are not supported here.", x.line);
         if (x.ty.ptr === 0 && x.ty.name === "U0") throw new HCError("A U0 cannot hold a value.", x.line);
+        if (Object.prototype.hasOwnProperty.call(scope, x.name)) throw new HCError("'" + x.name + "' is already declared in this scope.", x.line);
         if (x.size !== null) {
           var T = TYPES[x.ty.name]; if (!T || T.k === "void" || x.ty.ptr > 0) throw new HCError("Arrays of this type are not supported here.", x.line);
           var init = x.init && x.init.k === "list" ? x.init.items.map(function (it) { return evalExpr(it, sc); }) : null;
           var n = x.size === -1 ? (init ? init.length : 0) : Number(evalExpr(x.size, sc));
           if (!(n >= 0 && n <= 100000)) throw new HCError("Array size must be between 0 and 100000.", x.line);
+          cells += n; if (cells > CELL_LIMIT) throw new HCError("Too much memory: the program has allocated more than " + CELL_LIMIT + " array cells in total.", x.line);
           if (init && init.length > n) throw new HCError("Too many initial values for the array.", x.line);
           var arr = []; for (var i = 0; i < n; i++) arr.push(init && i < init.length ? convert(x.ty, init[i], x.line) : (T.k === "f" ? 0 : 0n));
           scope[x.name] = { ty: x.ty, v: { arr: arr, ety: x.ty }, ro: true };
@@ -511,7 +523,12 @@
         case "break": return BRK;
         case "continue": return CNT;
         case "return": return { k: "return", v: s.e ? evalExpr(s.e, sc) : undefined };
-        case "define": defines[s.name] = (function () { var ps = parse(s.text + ";"); return ps[0].e; })(); return null;
+        case "define": {
+          var dt = lex(s.text).filter(function (x) { return x.t !== "eof"; });
+          if (dt.length !== 1 || (dt[0].t !== "num" && dt[0].t !== "str" && dt[0].t !== "id")) throw new HCError("In this subset a #define must have a single value: a number, a string or a name.", s.line);
+          defines[s.name] = dt[0].t === "id" ? { k: "id", name: dt[0].v, line: s.line } : { k: dt[0].t === "num" ? "num" : "str", v: dt[0].v, line: s.line };
+          return null;
+        }
         case "class": classes[s.name] = { fields: s.fields }; return null;
         case "func": funcs[s.name] = s; return null;
         case "proto": return null;
@@ -526,7 +543,7 @@
     } catch (err) {
       if (err instanceof HCError) return { ok: false, out: out, error: err.message, line: err.line, steps: steps };
       if (err instanceof RangeError) return { ok: false, out: out, error: "Calls nested too deeply.", line: 0, steps: steps };
-      throw err;
+      return { ok: false, out: out, error: "The interpreter hit an internal problem with this program (" + String(err && err.message ? err.message : err).slice(0, 80) + "). Please report it.", line: 0, steps: steps };
     }
   }
 

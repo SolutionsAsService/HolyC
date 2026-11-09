@@ -38,6 +38,13 @@ const cases = [
   { name: "#define", hc: '#define SIZE 4\nI64 i, s = 0; for (i = 0; i < SIZE; i++) s += i * i; "%d\\n", s;', c: '#define SIZE 4\nI64 i, s = 0; for (i = 0; i < SIZE; i++) s += i * i; printf("%lld\\n", s);' },
   { name: "multi-line comments and escapes", hc: '/* a comment\n spanning lines */\n"tab:\\t|quote:\\"|percent:%%\\n"; // trailing', c: 'printf("tab:\\t|quote:\\"|percent:%%\\n");' },
   { name: "casts and wrap", hc: 'I64 big = 300; "%d %d\\n", (U8)big, (I8)200;', c: 'I64 big = 300; printf("%d %d\\n", (U8)big, (signed char)200);' },
+  { name: "string #define", hc: '#define NAME "Terry"\n"%s\\n", NAME;', expect: "Terry\n" },
+  { name: "numeric #define", hc: '#define LIMIT 7\n"%d\\n", LIMIT * 2;', c: '#define LIMIT 7\nprintf("%lld\\n", (I64)LIMIT * 2);' },
+  { name: "huge float with %.2f", hc: '"%.2f\\n", 1e21;', c: 'printf("%.2f\\n", 1e21);' },
+  { name: "negative zero and tiny negatives", hc: '"%.2f %.2f %.0f\\n", -0.0, -0.001, -0.4;', c: 'printf("%.2f %.2f %.0f\\n", -0.0, -0.001, -0.4);' },
+  { name: "space flag", hc: '"[% d][% d]\\n", 42, -42;', c: 'printf("[% lld][% lld]\\n", 42LL, -42LL);' },
+  { name: "unsigned printed with %u", hc: 'U64 big = 0xFFFFFFFFFFFFFFFF; "%u\\n", big;', c: 'unsigned long long big = 0xFFFFFFFFFFFFFFFFULL; printf("%llu\\n", big);' },
+  { name: "output is cut at exactly the limit", hc: 'I64 i; for (i = 0; i < 5000; i++) "ab";', expectErrorPrefixLen: 8000 },
   { name: "compound assignment", hc: 'I64 x = 10; x += 5; x -= 3; x *= 2; x /= 4; x %= 4; x <<= 3; x >>= 1; x |= 1; x &= 7; x ^= 2; "%d\\n", x;', c: 'I64 x = 10; x += 5; x -= 3; x *= 2; x /= 4; x %= 4; x <<= 3; x >>= 1; x |= 1; x &= 7; x ^= 2; printf("%lld\\n", x);' },
 ];
 // programs the interpreter must refuse, with a message that mentions this text
@@ -45,6 +52,10 @@ const refuse = [
   ['I64 x = 1 / 0; "%d\\n", x;', "Divide by zero"], ['"%d\\n", y;', "'y' is not defined"], ['Foo;', "not defined"], ['I64 a[3]; a[5] = 1;', "outside the array"],
   ['while (TRUE) { }', "too many steps"], ['"%d\\n", "text";', "needs an integer"], ['"%d\\n";', "more arguments"], ['"%d\\n", 1, 2;', "More arguments"],
   ['I64 *p;', "Pointers"], ['asm { }', "not supported"], ['"unterminated', "never closed"], ['I64 F(I64 n) { return F(n + 1); } F(0);', "nested too deeply"],
+  ['#define NAME "Terry"\n"%s\\n", NAME', "Expected"], ['#define ADD(a, b) a + b', "single value"], ['#define X 3 + 4', "single value"],
+  ['I64 x = 123456789012345678901234567890;', "does not fit in 64 bits"], ['I64 x = 1; I64 x = 2;', "already declared"],
+  ['I64 i; for (i = 0; i < 100000; i++) { I64 a[100000]; }', "Too much memory"], ['int x = 5;', "no 'int' type; use I64"], ['float f;', "use F64"], ['char *s;', "use U8"],
+  ['print("hi");', "Did you mean Print"], ['I64 count = 1; "%d\\n", Count;', "Did you mean count"],
   ['@', "Unexpected character"], ['U0 x;', "cannot hold"], ['I64 Add(I64 a, I64 b) { return a + b; } Add(1);', "has no default"], ['#include "x.HC"', "not supported"],
 ];
 
@@ -52,6 +63,7 @@ let bad = 0, compared = 0;
 const gcc = (() => { try { cp.execSync("gcc --version", { stdio: "ignore" }); return true; } catch (e) { return false; } })();
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "hccheck-"));
 cases.forEach((c, i) => {
+  if (c.expectErrorPrefixLen) { const rr = HC.run(c.hc); if (rr.ok || rr.out.length !== c.expectErrorPrefixLen || !/Output limit/.test(rr.error)) { bad++; console.log("FAIL", c.name, "=> out length", rr.out.length, rr.error); } return; }
   const r = HC.run(c.hc);
   if (!r.ok) { bad++; console.log("FAIL", c.name, "=> error:", r.error); return; }
   let want = c.expect;
@@ -73,6 +85,14 @@ refuse.forEach(([src, frag]) => {
 });
 // output is kept when a program fails part-way, and errors carry a line number
 const part = HC.run('"first\\n";\n"second\\n";\nI64 x = 1 / 0;'); if (part.ok || part.out !== "first\nsecond\n" || part.line !== 3) { bad++; console.log("FAIL: partial output / line number", JSON.stringify(part)); }
+// fuzz: run() must return, never throw, and never hang, for random and mutated programs
+{ let seed = 12345; const rnd = (n) => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed % n; };
+  const alphabet = ' \n"%d;{}()[]=+-*/<>!&|^~?:,.#\'abcXYZ_019$@\\';
+  const t0 = Date.now(); let threw = 0;
+  for (let i = 0; i < 400; i++) { let src = ""; const len = rnd(60); for (let j = 0; j < len; j++) src += alphabet[rnd(alphabet.length)];
+    if (i % 2) { const base = cases[rnd(cases.length)].hc || "";  const k = rnd(Math.max(1, base.length)); src = base.slice(0, k) + src.slice(0, 8) + base.slice(k + rnd(4)); }
+    try { const r = HC.run(src); if (typeof r.ok !== "boolean") throw new Error("no ok flag"); } catch (e) { threw++; console.log("FAIL: run() threw for", JSON.stringify(src.slice(0, 60)), e.message); } }
+  if (threw) bad++; if (Date.now() - t0 > 20000) { bad++; console.log("FAIL: fuzz was too slow"); } }
 fs.rmSync(tmp, { recursive: true, force: true });
-console.log(bad ? `${bad} FAILURE(S)` : `ok: ${cases.length} programs ran correctly (${compared} compared with gcc-compiled C, the rest against fixed expected output), ${refuse.length} bad programs refused with a clear message, partial output and line numbers kept`);
+console.log(bad ? `${bad} FAILURE(S)` : `ok: ${cases.length} programs ran correctly (${compared} compared with gcc-compiled C, the rest against fixed expected output), ${refuse.length} bad programs refused with a clear message, 400 fuzzed programs never threw, partial output and line numbers kept`);
 process.exit(bad ? 1 : 0);

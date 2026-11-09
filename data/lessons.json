@@ -40,28 +40,6 @@
    ]
   },
   {
-   "id": "wrap",
-   "title": "Numbers wrap around",
-   "body": [
-    "A fixed-size integer has no room beyond its largest value: add one and it wraps to the smallest, with no error. This is what a 64-bit machine does, and HolyC does not hide it.",
-    "The same happens to a U8 at 255 and an I64 at 9,223,372,036,854,775,807."
-   ],
-   "blocks": [
-    {
-     "code": "U8 a = 250;\na += 10;\n\"%d\\n\", a;",
-     "note": "250 + 10 is 260, which does not fit in 8 bits: 260 - 256 = 4."
-    },
-    {
-     "code": "I64 big = 9223372036854775807;\nbig++;\n\"%d\\n\", big;",
-     "note": "The largest I64, plus one, is the smallest."
-    },
-    {
-     "code": "I64 big = 300;\n\"%d %d\\n\", (U8)big, (I8)200;",
-     "note": "A cast to a smaller type keeps only the low bits."
-    }
-   ]
-  },
-  {
    "id": "functions",
    "title": "Functions",
    "body": [
@@ -129,6 +107,28 @@
     {
      "code": "class Point\n{\n  I64 x;\n  I64 y;\n};\n\nPoint p;\np.x = 3;\np.y = 4;\n\"%d\\n\", p.x * p.x + p.y * p.y;",
      "note": "The squared distance of (3, 4) from the origin."
+    }
+   ]
+  },
+  {
+   "id": "wrap",
+   "title": "Numbers wrap around",
+   "body": [
+    "A fixed-size integer has no room beyond its largest value: add one and it wraps to the smallest, with no error. This is what a 64-bit machine does, and HolyC does not hide it.",
+    "The same happens to a U8 at 255 and an I64 at 9,223,372,036,854,775,807."
+   ],
+   "blocks": [
+    {
+     "code": "U8 a = 250;\na += 10;\n\"%d\\n\", a;",
+     "note": "250 + 10 is 260, which does not fit in 8 bits: 260 - 256 = 4."
+    },
+    {
+     "code": "I64 big = 9223372036854775807;\nbig++;\n\"%d\\n\", big;",
+     "note": "The largest I64, plus one, is the smallest."
+    },
+    {
+     "code": "I64 big = 300;\n\"%d %d\\n\", (U8)big, (I8)200;",
+     "note": "A cast to a smaller type keeps only the low bits."
     }
    ]
   },

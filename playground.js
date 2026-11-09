@@ -10,7 +10,8 @@
   function run() {
     var text = src.value;
     if (!text.trim()) { out.innerHTML = '<div class="errbox"><p>Type a program first, for example <code>"Hello, world!\\n";</code></p></div>'; return; }
-    var r = window.HolyC.run(text);
+    var r;
+    try { r = window.HolyC.run(text); } catch (e) { r = { ok: false, out: "", error: "The interpreter hit an internal problem with this program. Please report it.", steps: 0 }; }
     var body = r.out ? esc(r.out) : '<span class="muted">(no output)</span>';
     if (r.ok) {
       out.innerHTML = '<div class="okbox"><pre aria-label="Output">' + body + '</pre><p class="meta">Ran in this page\'s interpreter, ' + r.steps + ' steps. Not run on TempleOS.</p></div>';

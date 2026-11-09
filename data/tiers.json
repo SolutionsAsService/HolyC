@@ -3,12 +3,12 @@
   {
    "id": "firm",
    "name": "Firm",
-   "blurb": "Widely documented and consistent everywhere the author remembers seeing it."
+   "blurb": "Consistent in every account the author remembers. Not checked against a source here."
   },
   {
    "id": "reported",
    "name": "Reported",
-   "blurb": "Widely reported, but details differ between accounts, or it rests on what Davis himself said."
+   "blurb": "Widely reported, or it rests on what Davis himself said; details may differ between accounts. Reported does not mean doubted: it means the detail comes from reports that have not been checked here."
   },
   {
    "id": "uncertain",

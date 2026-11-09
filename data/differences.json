@@ -12,7 +12,7 @@
   },
   {
    "title": "Sized type names",
-   "text": "U0, I8 to I64, U8 to U64 and F64 replace void, char, int, long and double. Bool is its own type.",
+   "text": "U0, I8 to I64, U8 to U64 and F64 replace void, char, int, long and double.",
    "tier": "firm"
   },
   {
