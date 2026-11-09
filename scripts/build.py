@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 e = lambda s: html.escape(str(s), quote=True)
 L = lambda f: json.loads((ROOT / "data" / f).read_text(encoding="utf-8"))
 LESSONS, TIERS, DIFFS, FACTS, PAL, HERO, OUTS = L("lessons.json")["lessons"], {t["id"]: t for t in L("tiers.json")["tiers"]}, L("differences.json")["differences"], L("facts.json")["facts"], L("palette.json"), L("hero.json"), L("outputs.json")
+QUOTES = L("quotes.json")
 _site = ROOT / "data" / "site.json"
 SITE_URL = (json.loads(_site.read_text(encoding="utf-8")).get("url", "").rstrip("/") if _site.exists() else "")
 REPO = "https://github.com/SolutionsAsService/HolyC"
@@ -127,7 +128,7 @@ def palette_strip():
 def index():
     cards = [("holyc.html", "The language", f"{len(LESSONS)} lessons, all run", "HolyC from first principles: types, functions, loops and classes, with every output produced by running the example in this site's interpreter."),
              ("templeos.html", "The operating system", "what it was and why it was odd", "A 64-bit system with a 640 by 480, 16-colour screen, no separation between kernel and programs, and a compiler in the box."),
-             ("terry.html", "The author", "a short, careful account", "Terry A. Davis, the programmer who wrote it, and a man living with serious mental illness."),
+             ("terry.html", "The author", "a short account, with his own words", "Terry A. Davis, the programmer who wrote it: a short account, and a few lines in his own words so you can judge for yourself."),
              ("playground.html", "Try it", "run HolyC in your browser", "Type a program and run it, using a small interpreter for a subset of the language.")]
     ch = "".join(f'<li class="card"><p class="tag">{e(t)}</p><h3><a href="{h}">{e(n)}</a></h3><p>{e(d)}</p></li>' for h, n, t, d in cards)
     tl = "".join(f'<li>{mark(t["id"])}<span>{e(t["blurb"])}</span></li>' for t in TIERS.values())
@@ -204,7 +205,7 @@ def templeos_page():
 <p class="lede">A complete operating system, written largely by one man, built around one language and one fixed display mode.</p></section>
 <section aria-labelledby="h-what"><h2 id="h-what" class="sech">What it was</h2>
 <div class="prose"><p>TempleOS is a 64-bit operating system for PCs. Terry A. Davis wrote most of it, largely on his own, mostly in HolyC: the kernel, the shell, the editor, the compiler, the games and the documents. It is deliberately unlike other systems: one display mode, one language, one address space and, by most accounts, no networking.</p>
-<p>Davis described it as a temple for God, and said he built it because God told him to. That belief shaped the design, and it is part of why the project is remembered. This site records his claim as his claim, and concentrates on the software.</p></div></section>
+<p>Davis called it &ldquo;God's official temple&rdquo; and said he built it because God told him to. That belief shaped the design, and it is part of why the project is remembered. This site reports it as what he said, and concentrates on the software.</p></div></section>
 <section aria-labelledby="h-design"><h2 id="h-design" class="sech">The design, in facts</h2>
 {legline()}<ul class="facts">{facts_list(OS_FACTS)}</ul></section>
 <section class="band" aria-labelledby="h-screen"><h2 id="h-screen" class="sech">The screen</h2>
@@ -217,15 +218,21 @@ def templeos_page():
 ''' + foot()
 
 
+def quotes_block():
+    items = "".join(f'<figure class="quote"><blockquote><p>&ldquo;{e(x["text"])}&rdquo;</p></blockquote><figcaption><span class="qa">{e(x["about"])}</span>{mark(x["tier"])}<span class="qn">{e(x["note"])}</span></figcaption></figure>' for x in QUOTES["quotes"])
+    return f'<section aria-labelledby="h-words"><h2 id="h-words" class="sech">In his own words</h2><p class="lede2">{e(QUOTES["intro"])}</p>{items}</section>'
+
+
 def terry_page():
-    return head("Terry A. Davis, the author of TempleOS", "A short, careful account of Terry A. Davis, the programmer who wrote TempleOS and HolyC, and the serious illness that was part of the story.", "terry.html") + f'''
+    return head("Terry A. Davis, the author of TempleOS", "A short account of Terry A. Davis, the programmer who wrote TempleOS and HolyC, with a few lines in his own words.", "terry.html") + f'''
 <section class="page-head" data-bar="Terry A. Davis"><p class="kicker">The author</p><h1>Terry A. Davis</h1>
-<p class="lede">The programmer who wrote TempleOS and HolyC, and a man living with serious mental illness.</p></section>
+<p class="lede">The programmer who wrote TempleOS and HolyC.</p></section>
 <section aria-labelledby="h-care"><h2 id="h-care" class="sech">A note on how this page is written</h2>
-<div class="prose"><p>Davis's life was difficult and he died young. In his later years he also said many offensive and abusive things, which are well documented. This site is about the software, which is the reason anyone remembers him, so this page is short and sticks to the record. It does not repeat his offensive remarks, and it does not treat his illness as entertainment.</p></div></section>
+<div class="prose"><p>Davis's life was a hard one, and he died young. He lived with serious mental illness. This site is about the software, which is why people remember him, so this page is short: it sticks to the record, lets his own words about the work speak for themselves, and does not make his illness into entertainment. It also does not repeat remarks that hurt other people; they are documented elsewhere.</p></div></section>
 <section aria-labelledby="h-facts"><h2 id="h-facts" class="sech">What is known</h2>
 {legline()}<ul class="facts">{facts_list(PERSON_FACTS)}</ul>
 <p class="small">Nothing here has been checked against primary sources. For a fuller and sourced account, see the Wikipedia article listed on the <a href="resources.html">resources page</a>.</p></section>
+{quotes_block()}
 <section class="band" aria-labelledby="h-legacy"><h2 id="h-legacy" class="sech">The work</h2>
 <div class="prose"><p>Whatever one makes of the circumstances, TempleOS is a notable piece of work: an operating system, a compiler, an editor and a set of programs, designed around one person's ideas, largely by that one person. HolyC lives on in community compilers, and the system is still studied as an unusual, tightly integrated design.</p></div>
 <p><a class="more" href="holyc.html">Learn the language he wrote</a></p></section>

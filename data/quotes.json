@@ -1,0 +1,17 @@
+{
+ "intro": "Two short lines about the work, so readers can hear him directly. They are quoted from memory, so the exact wording may differ: check the originals. His other public statements, some of them offensive, are documented elsewhere and are not repeated here; readers who want the full record can judge for themselves from the sources on the resources page.",
+ "quotes": [
+  {
+   "text": "God's official temple",
+   "about": "How Davis described TempleOS.",
+   "tier": "reported",
+   "note": "A short phrase he used about the system. No source is attached yet."
+  },
+  {
+   "text": "An idiot admires complexity, a genius admires simplicity.",
+   "about": "A saying widely attributed to Davis, from his talks about TempleOS.",
+   "tier": "uncertain",
+   "note": "Widely attributed to him; the exact wording and the original source have not been checked here."
+  }
+ ]
+}

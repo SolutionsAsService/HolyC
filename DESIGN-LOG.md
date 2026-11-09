@@ -46,3 +46,6 @@ S1 not met (no R2). S2 not met (round 1's changes were judged by measurement and
 - The interpreter uses C operator precedence, prints `$` literally, and does not handle signed against unsigned comparison or `%d` of a U64 above 2^63; these are documented on the playground page.
 - Not shown on a real phone (the Run button with the keyboard open, iOS zoom on the textarea).
 - No inclusion seat.
+
+## Owner grade and revision (2026-11-09)
+Owner grade: **A-**, with a request to soften the language about Davis and to let readers judge for themselves from his own words instead of from description. Done: the Davis page is shorter and gentler (no characterisation of his statements; offensive remarks are acknowledged in one neutral sentence and not repeated), and a new "In his own words" section holds two short quotes (`data/quotes.json`), each marked. Both were written from memory with no web access, so the wording is unverified; one is marked Uncertain and the page says to check the originals. Offensive remarks are deliberately not quoted here; the resources page points to the sourced accounts. If the owner wants those quoted verbatim, that needs sourced text and a decision.
