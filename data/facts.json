@@ -1,0 +1,112 @@
+{
+ "facts": [
+  {
+   "text": "TempleOS was created by Terry A. Davis, who wrote it largely on his own.",
+   "tier": "firm",
+   "note": "Both the sole-author claim and its scale are repeated in nearly every account.",
+   "about": "both"
+  },
+  {
+   "text": "Terry Davis was born on 15 December 1969.",
+   "tier": "firm",
+   "note": "",
+   "about": "person"
+  },
+  {
+   "text": "Terry Davis died on 11 August 2018, aged 48.",
+   "tier": "firm",
+   "note": "",
+   "about": "person"
+  },
+  {
+   "text": "TempleOS is a 64-bit operating system for PCs, released into the public domain.",
+   "tier": "firm",
+   "note": "",
+   "about": "os"
+  },
+  {
+   "text": "Its display is fixed at 640 by 480 pixels with 16 colours.",
+   "tier": "firm",
+   "note": "Davis defended this choice as part of the design.",
+   "about": "os"
+  },
+  {
+   "text": "Everything runs in one address space at the highest privilege level (ring 0), with no separation between the kernel and programs.",
+   "tier": "firm",
+   "note": "",
+   "about": "os"
+  },
+  {
+   "text": "HolyC is both the programming language and the command-line shell, and the compiler is built into the system.",
+   "tier": "firm",
+   "note": "",
+   "about": "os"
+  },
+  {
+   "text": "TempleOS has no network stack.",
+   "tier": "reported",
+   "note": "Often cited as a deliberate design choice.",
+   "about": "os"
+  },
+  {
+   "text": "It was first called the J Operating System, then LoseThos, then SparrowOS, and renamed TempleOS in 2013.",
+   "tier": "reported",
+   "note": "The names and their order are well known; the exact years vary between accounts.",
+   "about": "os"
+  },
+  {
+   "text": "Davis said that God told him to build it, and that it was God's temple.",
+   "tier": "reported",
+   "note": "These are Davis's own words, and they shaped how he described the project.",
+   "about": "person"
+  },
+  {
+   "text": "Its documents use a hypertext format called DolDoc, in which text, links and small pictures can sit inside source code.",
+   "tier": "reported",
+   "note": "",
+   "about": "os"
+  },
+  {
+   "text": "The system includes a program called the Oracle (or Word of God) that picks random words, which Davis treated as messages.",
+   "tier": "reported",
+   "note": "",
+   "about": "os"
+  },
+  {
+   "text": "Davis was struck by a train and killed.",
+   "tier": "reported",
+   "note": "Reported widely; the details are not repeated here.",
+   "about": "person"
+  },
+  {
+   "text": "Davis lived with serious mental illness (reports describe schizophrenia), which was part of the story of the project.",
+   "tier": "reported",
+   "note": "Described this way in most accounts. Reports differ on the diagnosis and its history.",
+   "about": "person"
+  },
+  {
+   "text": "In his later years Davis made many offensive and abusive statements, which are well documented. This site is about the software.",
+   "tier": "reported",
+   "note": "",
+   "about": "person"
+  },
+  {
+   "text": "TempleOS is on the order of 100,000 lines of code.",
+   "tier": "uncertain",
+   "note": "A figure often quoted; sources differ.",
+   "about": "os"
+  },
+  {
+   "text": "The sound is limited to a single voice.",
+   "tier": "uncertain",
+   "note": "",
+   "about": "os"
+  },
+  {
+   "text": "Davis trained as an electrical engineer and worked as a programmer before his illness.",
+   "tier": "uncertain",
+   "note": "",
+   "about": "person"
+  }
+ ]
+}

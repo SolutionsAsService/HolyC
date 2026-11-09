@@ -1,0 +1,59 @@
+{
+ "differences": [
+  {
+   "title": "No main, no setup",
+   "text": "Statements at the top level run immediately, in order. The compiler is part of the operating system, so the prompt, scripts and programs all use one language.",
+   "tier": "firm"
+  },
+  {
+   "title": "A string statement prints",
+   "text": "A bare string literal is a statement that prints it; extra values after commas fill the % codes. Print(...) does the same explicitly.",
+   "tier": "firm"
+  },
+  {
+   "title": "Sized type names",
+   "text": "U0, I8 to I64, U8 to U64 and F64 replace void, char, int, long and double. Bool is its own type.",
+   "tier": "firm"
+  },
+  {
+   "title": "Calls without parentheses",
+   "text": "A function that needs no arguments can be called by its name alone.",
+   "tier": "firm"
+  },
+  {
+   "title": "Default and skipped arguments",
+   "text": "A parameter can have a default, and a call can leave an argument out by keeping its comma.",
+   "tier": "firm"
+  },
+  {
+   "title": "Inline assembly and the compiler as a service",
+   "text": "asm blocks sit inside HolyC code, and code can be compiled and run at run time because the compiler is always present.",
+   "tier": "firm"
+  },
+  {
+   "title": "Classes with inheritance",
+   "text": "class groups fields like a struct and can extend another class.",
+   "tier": "reported"
+  },
+  {
+   "title": "A richer switch",
+   "text": "switch can contain start and end sections for sub-cases.",
+   "tier": "reported"
+  },
+  {
+   "title": "Exceptions",
+   "text": "try, catch and throw exist; a thrown value is a short constant.",
+   "tier": "reported"
+  },
+  {
+   "title": "$ is special in strings",
+   "text": "In text shown by the system, a dollar sign begins a document-format command, so a literal dollar is written twice.",
+   "tier": "reported"
+  },
+  {
+   "title": "Operator precedence",
+   "text": "Some operators, notably the bitwise ones against the comparisons, bind in a different order from C. This site's interpreter uses C precedence, so avoid mixing them.",
+   "tier": "uncertain"
+  }
+ ]
+}

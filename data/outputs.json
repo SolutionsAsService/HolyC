@@ -1,0 +1,62 @@
+{
+ "interpreter": "holyc-core.js (a subset of HolyC; not TempleOS)",
+ "examples": {
+  "15eed37064d6652e": {
+   "out": "Hello, world!\n"
+  },
+  "c40da6b9a1af3144": {
+   "out": "HolyC has 5 letters\n"
+  },
+  "3241317f354252cc": {
+   "out": "6 times 7 is 42\n"
+  },
+  "b11cac6f848c44e3": {
+   "out": "42 2.5 A\n"
+  },
+  "c691c6863bc6c8e1": {
+   "out": "65 66\n"
+  },
+  "d905590155dc3073": {
+   "out": "4\n"
+  },
+  "69365beb0883d3d9": {
+   "out": "-9223372036854775808\n"
+  },
+  "b4200c2655f132d2": {
+   "out": "44 -56\n"
+  },
+  "fc29b89f3969f726": {
+   "out": "Hello from Greet\nHello from Greet\n"
+  },
+  "ff76dfa8f38ba6a2": {
+   "out": "11 3\n"
+  },
+  "843d25c7d62d11ac": {
+   "out": "24 60 60\n"
+  },
+  "3324eeeaa63a4474": {
+   "out": "5050\n"
+  },
+  "61464cb68abcdff1": {
+   "out": "5 4 3 2 1 \n"
+  },
+  "aaf2be96a4e00cf7": {
+   "out": "one two two three other \n"
+  },
+  "d7f7ca14fae93ddc": {
+   "out": "8 letters, first T, last S\n"
+  },
+  "195bd3bc2ef3d937": {
+   "out": "1 2 3 4 5 \n"
+  },
+  "0db7ff256bd744b7": {
+   "out": "25\n"
+  },
+  "951df64617c9aac5": {
+   "out": "2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 \n"
+  },
+  "41c184b1c77a0a55": {
+   "out": "0 1 1 2 3 5 8 13 21 34 55 89 144 233 377 \n"
+  }
+ }
+}

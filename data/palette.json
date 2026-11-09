@@ -1,0 +1,86 @@
+{
+ "note": "The 16 colours are the standard VGA palette, in the order and with the names TempleOS uses for them, as recalled; the hex values are the standard VGA values.",
+ "tier": "reported",
+ "colors": [
+  {
+   "index": 0,
+   "name": "BLACK",
+   "hex": "#000000"
+  },
+  {
+   "index": 1,
+   "name": "BLUE",
+   "hex": "#0000AA"
+  },
+  {
+   "index": 2,
+   "name": "GREEN",
+   "hex": "#00AA00"
+  },
+  {
+   "index": 3,
+   "name": "CYAN",
+   "hex": "#00AAAA"
+  },
+  {
+   "index": 4,
+   "name": "RED",
+   "hex": "#AA0000"
+  },
+  {
+   "index": 5,
+   "name": "PURPLE",
+   "hex": "#AA00AA"
+  },
+  {
+   "index": 6,
+   "name": "BROWN",
+   "hex": "#AA5500"
+  },
+  {
+   "index": 7,
+   "name": "LTGRAY",
+   "hex": "#AAAAAA"
+  },
+  {
+   "index": 8,
+   "name": "DKGRAY",
+   "hex": "#555555"
+  },
+  {
+   "index": 9,
+   "name": "LTBLUE",
+   "hex": "#5555FF"
+  },
+  {
+   "index": 10,
+   "name": "LTGREEN",
+   "hex": "#55FF55"
+  },
+  {
+   "index": 11,
+   "name": "LTCYAN",
+   "hex": "#55FFFF"
+  },
+  {
+   "index": 12,
+   "name": "LTRED",
+   "hex": "#FF5555"
+  },
+  {
+   "index": 13,
+   "name": "LTPURPLE",
+   "hex": "#FF55FF"
+  },
+  {
+   "index": 14,
+   "name": "YELLOW",
+   "hex": "#FFFF55"
+  },
+  {
+   "index": 15,
+   "name": "WHITE",
+   "hex": "#FFFFFF"
+  }
+ ]
+}

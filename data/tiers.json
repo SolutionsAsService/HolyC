@@ -1,0 +1,19 @@
+{
+ "tiers": [
+  {
+   "id": "firm",
+   "name": "Firm",
+   "blurb": "Widely documented and consistent everywhere the author remembers seeing it."
+  },
+  {
+   "id": "reported",
+   "name": "Reported",
+   "blurb": "Widely reported, but details differ between accounts, or it rests on what Davis himself said."
+  },
+  {
+   "id": "uncertain",
+   "name": "Uncertain",
+   "blurb": "Recalled from memory and not confirmed. Treat as unverified."
+  }
+ ]
+}

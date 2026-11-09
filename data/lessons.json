@@ -1,0 +1,151 @@
+{
+ "lessons": [
+  {
+   "id": "hello",
+   "title": "Hello, world",
+   "body": [
+    "In HolyC a string literal on its own is a statement, and it prints. There is no main function to write and no include: code typed at the prompt runs as soon as you press Enter, because in TempleOS the language and the shell are the same thing.",
+    "A program is just a list of statements, run from the top. A function defined earlier can be called by a later line."
+   ],
+   "blocks": [
+    {
+     "code": "\"Hello, world!\\n\";",
+     "note": "The string is the whole program. \\n is a newline."
+    },
+    {
+     "code": "Print(\"%s has %d letters\\n\", \"HolyC\", 5);",
+     "note": "Print is the function the string statement calls. %s and %d stand for a string and an integer."
+    },
+    {
+     "code": "\"%d times %d is %d\\n\", 6, 7, 6 * 7;",
+     "note": "A string statement can take arguments after commas."
+    }
+   ]
+  },
+  {
+   "id": "types",
+   "title": "Types",
+   "body": [
+    "The integer types say their size: I8, I16, I32 and I64 are signed, U8, U16, U32 and U64 are unsigned, and the number is the bits. F64 is a 64-bit floating-point number, Bool is true or false, and U0 means no value, the type of a function that returns nothing. There are no int, char or float keywords.",
+    "I64 is the type to reach for by default. A character is a U8; a constant like 'A' is its code."
+   ],
+   "blocks": [
+    {
+     "code": "I64 n = 42;\nF64 x = 2.5;\nU8 c = 'A';\n\"%d %.1f %c\\n\", n, x, c;"
+    },
+    {
+     "code": "\"%d %d\\n\", 'A', 'A' + 1;",
+     "note": "A character constant is a number."
+    }
+   ]
+  },
+  {
+   "id": "wrap",
+   "title": "Numbers wrap around",
+   "body": [
+    "A fixed-size integer has no room beyond its largest value: add one and it wraps to the smallest, with no error. This is what a 64-bit machine does, and HolyC does not hide it.",
+    "The same happens to a U8 at 255 and an I64 at 9,223,372,036,854,775,807."
+   ],
+   "blocks": [
+    {
+     "code": "U8 a = 250;\na += 10;\n\"%d\\n\", a;",
+     "note": "250 + 10 is 260, which does not fit in 8 bits: 260 - 256 = 4."
+    },
+    {
+     "code": "I64 big = 9223372036854775807;\nbig++;\n\"%d\\n\", big;",
+     "note": "The largest I64, plus one, is the smallest."
+    },
+    {
+     "code": "I64 big = 300;\n\"%d %d\\n\", (U8)big, (I8)200;",
+     "note": "A cast to a smaller type keeps only the low bits."
+    }
+   ]
+  },
+  {
+   "id": "functions",
+   "title": "Functions",
+   "body": [
+    "A function is declared with its return type first: U0 for none. A function with no arguments can be called without parentheses, which is why a lone name like Greet; on a line runs it. Arguments can have default values, and a call can leave an argument out by keeping the comma.",
+    "Define a function before the line that calls it."
+   ],
+   "blocks": [
+    {
+     "code": "U0 Greet()\n{\n  \"Hello from Greet\\n\";\n}\nGreet;\nGreet();",
+     "note": "Both lines call the same function."
+    },
+    {
+     "code": "I64 Add(I64 a, I64 b = 10)\n{\n  return a + b;\n}\n\"%d %d\\n\", Add(1), Add(1, 2);",
+     "note": "The second argument defaults to 10."
+    },
+    {
+     "code": "I64 Volume(I64 w = 2, I64 h = 3, I64 d = 4)\n{\n  return w * h * d;\n}\n\"%d %d %d\\n\", Volume(), Volume(5), Volume(, , 10);",
+     "note": "Volume(, , 10) skips the first two arguments and uses their defaults."
+    }
+   ]
+  },
+  {
+   "id": "flow",
+   "title": "Loops and choices",
+   "body": [
+    "The control statements are the ones from C: if and else, for, while, do while, switch with case and default, break and continue. A switch falls through from one case to the next unless you break."
+   ],
+   "blocks": [
+    {
+     "code": "I64 i, sum = 0;\nfor (i = 1; i <= 100; i++)\n  sum += i;\n\"%d\\n\", sum;",
+     "note": "The sum of 1 to 100."
+    },
+    {
+     "code": "I64 n = 5;\ndo {\n  \"%d \", n;\n  n--;\n} while (n > 0);\n\"\\n\";"
+    },
+    {
+     "code": "I64 i;\nfor (i = 1; i <= 4; i++) {\n  switch (i) {\n    case 1: \"one \";\n    case 2: \"two \"; break;\n    case 3: \"three \"; break;\n    default: \"other \";\n  }\n}\n\"\\n\";",
+     "note": "Case 1 has no break, so it falls through into case 2."
+    }
+   ]
+  },
+  {
+   "id": "arrays",
+   "title": "Strings and arrays",
+   "body": [
+    "A string is a pointer to characters, written U8 *. Indexing gives the character code, and StrLen counts. A fixed array is declared with its size and can be filled in braces."
+   ],
+   "blocks": [
+    {
+     "code": "U8 *s = \"TempleOS\";\n\"%d letters, first %c, last %c\\n\", StrLen(s), s[0], s[StrLen(s) - 1];"
+    },
+    {
+     "code": "I64 a[5] = {5, 3, 1, 4, 2};\nI64 i, j, t;\nfor (i = 0; i < 4; i++)\n  for (j = 0; j < 4 - i; j++)\n    if (a[j] > a[j + 1]) {\n      t = a[j]; a[j] = a[j + 1]; a[j + 1] = t;\n    }\nfor (i = 0; i < 5; i++)\n  \"%d \", a[i];\n\"\\n\";",
+     "note": "A bubble sort."
+    }
+   ]
+  },
+  {
+   "id": "classes",
+   "title": "Classes",
+   "body": [
+    "A class groups named fields, like a C struct, and a variable of that class holds all of them. Fields are reached with a dot."
+   ],
+   "blocks": [
+    {
+     "code": "class Point\n{\n  I64 x;\n  I64 y;\n};\n\nPoint p;\np.x = 3;\np.y = 4;\n\"%d\\n\", p.x * p.x + p.y * p.y;",
+     "note": "The squared distance of (3, 4) from the origin."
+    }
+   ]
+  },
+  {
+   "id": "more",
+   "title": "A longer example",
+   "body": [
+    "Small functions combine into programs. This one lists the prime numbers up to 50 by trial division, and then the first fifteen Fibonacci numbers."
+   ],
+   "blocks": [
+    {
+     "code": "Bool IsPrime(I64 n)\n{\n  I64 d;\n  if (n < 2) return FALSE;\n  for (d = 2; d * d <= n; d++)\n    if (n % d == 0) return FALSE;\n  return TRUE;\n}\n\nI64 n;\nfor (n = 2; n <= 50; n++)\n  if (IsPrime(n))\n    \"%d \", n;\n\"\\n\";"
+    },
+    {
+     "code": "I64 Fib(I64 n)\n{\n  if (n < 2) return n;\n  return Fib(n - 1) + Fib(n - 2);\n}\n\nI64 i;\nfor (i = 0; i < 15; i++)\n  \"%d \", Fib(i);\n\"\\n\";"
+    }
+   ]
+  }
+ ]
+}
